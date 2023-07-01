@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Камень, ножницы, бумага</title>
+  <style>
+    body {
+      background-color: black;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    h1 {
+      color: white;
+    }
+
+    .button {
+      border: 2px solid #800080;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: #800080;
+      background-color: transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      margin: 10px;
+    }
+
+    .button:hover {
+      background-color: #800080;
+      color: white;
+    }
+
+    .result {
+      color: white;
+      margin-top: 20px;
+    }
+  </style>
+  <script>
+    function playGame(userChoice) {
+      var choices = ["Камень", "Ножницы", "Бумага"];
+      var computerChoice = choices[Math.floor(Math.random() * choices.length)];
+      var result;
+
+      if (userChoice === computerChoice) {
+        result = "Ничья!";
+      } else if (
+        (userChoice === "Камень" && computerChoice === "Ножницы") ||
+        (userChoice === "Ножницы" && computerChoice === "Бумага") ||
+        (userChoice === "Бумага" && computerChoice === "Камень")
+      ) {
+        result = "Вы выиграли!";
+      } else {
+        result = "Компьютер выиграл!";
+      }
+
+      document.getElementById("result").innerText = result;
+    }
+
+    function resetGame() {
+      document.getElementById("result").innerText = "";
+    }
+  </script>
+</head>
+<body>
+  <h1>Камень, ножницы, бумага</h1>
+
+  <button class="button" onclick="playGame('Камень')">Камень</button>
+  <button class="button" onclick="playGame('Ножницы')">Ножницы</button>
+  <button class="button" onclick="playGame('Бумага')">Бумага</button>
+
+  <h2 id="result" class="result"></h2>
+
+  <button class="button" onclick="resetGame()">Сыграть снова</button>
+</body>
+</html>
