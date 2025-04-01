@@ -1,1673 +1,1000 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WINSENT GAME HUB</title>
+    <title>HACKER PHONE v3.1.4</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
-        
-        :root {
-            --neon-pink: #ff00ff;
-            --neon-blue: #00ffff;
-            --neon-purple: #9d00ff;
-            --neon-green: #00ff00;
-            --neon-yellow: #ffff00;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
         
         body {
-            font-family: 'Orbitron', sans-serif;
-            background-color: #0a0a0a;
-            color: white;
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #000;
+            color: #0f0;
             overflow-x: hidden;
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
+            user-select: none;
         }
         
-        .neon-text {
-            text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--neon-pink), 0 0 20px var(--neon-pink);
+        .glow {
+            text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
         }
         
-        .neon-border {
-            position: relative;
-            border: 2px solid transparent;
-            border-radius: 10px;
-            background: rgba(10, 10, 10, 0.7);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
-            transition: all 0.3s;
+        .terminal {
+            background-color: rgba(0, 15, 0, 0.3);
+            border: 1px solid #0f0;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.5);
         }
         
-        .neon-border::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 10px;
-            background: linear-gradient(45deg, var(--neon-pink), var(--neon-blue), var(--neon-purple), var(--neon-green));
-            background-size: 400% 400%;
-            z-index: -1;
-            animation: neonGlow 3s linear infinite;
-            opacity: 0.7;
+        .phone-frame {
+            background: linear-gradient(135deg, #111 0%, #000 100%);
+            border: 2px solid #333;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
         }
         
-        .neon-border:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+        .app-icon {
+            transition: all 0.2s;
+            filter: drop-shadow(0 0 5px rgba(0, 255, 0, 0.5));
         }
         
-        @keyframes neonGlow {
-            0% {
-                background-position: 0% 50%;
+        .app-icon:hover {
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 8px rgba(0, 255, 0, 0.8));
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            border-right: .15em solid #0f0;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end), blink-caret .75s step-end infinite;
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #0f0 }
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        .blink {
+            animation: blink-animation 1s steps(2, start) infinite;
+        }
+        
+        @keyframes blink-animation {
+            to {
+                visibility: hidden;
             }
-            50% {
-                background-position: 100% 50%;
+        }
+        
+        .hacker-btn {
+            background: linear-gradient(145deg, #0a1a0a, #030d03);
+            border: 1px solid #0f0;
+            box-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
+        }
+        
+        .hacker-btn:hover {
+            background: linear-gradient(145deg, #0f2a0f, #061b06);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+        
+        .pulse {
+            animation: pulse-animation 2s infinite;
+        }
+        
+        @keyframes pulse-animation {
+            0% {
+                box-shadow: 0 0 0 0px rgba(0, 255, 0, 0.4);
             }
             100% {
-                background-position: 0% 50%;
+                box-shadow: 0 0 0 10px rgba(0, 255, 0, 0);
             }
-        }
-        
-        .game-container {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .game-canvas {
-            border: 2px solid var(--neon-blue);
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
-            background-color: rgba(0, 0, 0, 0.7);
-            max-width: 100%;
-            max-height: 80vh;
-            margin: 0 auto;
-            display: block;
-        }
-        
-        .mobile-controls {
-            display: none;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-top: 20px;
-            padding: 10px;
-        }
-        
-        .mobile-btn {
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid var(--neon-pink);
-            color: white;
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 20px;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
-        }
-        
-        .mobile-btn:active {
-            background: var(--neon-pink);
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.8);
-        }
-        
-        .fade-out {
-            animation: fadeOut 0.5s forwards;
-        }
-        
-        .fade-in {
-            animation: fadeIn 0.5s forwards;
-        }
-        
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; transform: scale(0.9); }
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @media (max-width: 768px) {
-            .mobile-controls {
-                display: grid;
-            }
-            
-            .game-title {
-                font-size: 1.5rem;
-            }
-            
-            .game-btn {
-                padding: 15px 20px;
-                font-size: 1rem;
-            }
-        }
-
-        /* Special styles for Space Invaders */
-        .invader {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background-color: #00ff00;
-            border-radius: 50%;
-        }
-
-        /* Styles for Flappy Bird */
-        .pipe {
-            position: absolute;
-            background-color: #00ff00;
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
-    <!-- Home Button -->
-    <div class="absolute top-4 left-4 z-50">
-        <a href="https://hwsata.github.io/mew/" class="neon-border px-4 py-2 text-white flex items-center">
-            <i class="fas fa-home mr-2"></i> Home
-        </a>
-    </div>
-
-    <!-- Main Container -->
-    <div class="flex flex-col items-center justify-center flex-grow p-4">
-        <!-- Game Selection Screen -->
-        <div id="game-selection" class="text-center">
-            <h1 class="text-4xl md:text-6xl font-bold mb-8 neon-text">WINSENT GAME HUB</h1>
-            <p class="text-xl md:text-2xl mb-12 text-gray-300">Выберите игру:</p>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                <!-- Row 1 -->
-                <button id="game1-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-hand-rock mb-2"></i><br>
-                    Камень, Ножницы, Бумага
-                </button>
-                
-                <button id="game2-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-snake mb-2"></i><br>
-                    Змейка
-                </button>
-                
-                <button id="game3-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-fighter-jet mb-2"></i><br>
-                    Воздушный бой
-                </button>
-
-                <!-- Row 2 -->
-                <button id="game4-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-bird mb-2"></i><br>
-                    Flappy Bird
-                </button>
-                
-                <button id="game5-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-space-shuttle mb-2"></i><br>
-                    Space Invaders
-                </button>
-                
-                <button id="game6-btn" class="game-btn neon-border p-4 md:p-6 text-xl md:text-2xl">
-                    <i class="fas fa-table-tennis mb-2"></i><br>
-                    Понг
-                </button>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="phone-frame relative rounded-3xl w-full max-w-md h-[650px] overflow-hidden">
+        <!-- Status bar -->
+        <div class="absolute top-0 left-0 right-0 p-2 flex justify-between items-center text-xs bg-black bg-opacity-70 z-20">
+            <div>HACKER OS v3.1.4</div>
+            <div class="flex space-x-2">
+                <span>SECURE</span>
+                <span>21:37</span>
+                <span id="battery"><i class="fas fa-battery-full"></i> 87%</span>
             </div>
         </div>
         
-        <!-- Game 1: Rock Paper Scissors -->
-        <div id="game1-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-6 neon-text">КАМЕНЬ, НОЖНИЦЫ, БУМАГА</h2>
-            
-            <div class="flex flex-col md:flex-row items-center justify-center gap-8 mb-8">
-                <div class="neon-border p-6 w-64">
-                    <h3 class="text-xl mb-4">Твой выбор</h3>
-                    <div id="player-choice" class="text-6xl">?</div>
+        <!-- Main screen -->
+        <div id="homeScreen" class="pt-10 h-full">
+            <div class="flex flex-col h-full">
+                <!-- Date widget -->
+                <div class="text-center pt-4 pb-2">
+                    <div class="text-xl glow">HACKER PHONE</div>
+                    <div class="text-xs mt-1">29.07.2023 | UNDEFINED LOCATION</div>
                 </div>
                 
-                <div class="neon-border p-6 w-64">
-                    <h3 class="text-xl mb-4">Компьютер</h3>
-                    <div id="computer-choice" class="text-6xl">?</div>
+                <!-- App grid -->
+                <div class="flex-1 grid grid-cols-4 gap-6 p-4 items-center justify-items-center">
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('terminal')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-terminal text-green-500"></i>
+                        </div>
+                        <span class="text-xs mt-1">TERMINAL</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('missions')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-bullseye text-red-500"></i>
+                        </div>
+                        <span class="text-xs mt-1">MISSIONS</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('tools')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-tools text-blue-500"></i>
+                        </div>
+                        <span class="text-xs mt-1">TOOLS</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('contacts')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-address-book text-yellow-500"></i>
+                        </div>
+                        <span class="text-xs mt-1">CONTACTS</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('logs')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-database text-purple-500"></i>
+                        </div>
+                        <span class="text-xs mt-1">DATA LOGS</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('network')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-network-wired text-teal-300"></i>
+                        </div>
+                        <span class="text-xs mt-1">NETWORK</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('market')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-orange-400"></i>
+                        </div>
+                        <span class="text-xs mt-1">BLACK MARKET</span>
+                    </div>
+                    
+                    <div class="app-icon flex flex-col items-center" onclick="openApp('settings')">
+                        <div class="w-12 h-12 bg-black rounded-xl border border-green-600 flex items-center justify-center">
+                            <i class="fas fa-cog text-gray-400"></i>
+                        </div>
+                        <span class="text-xs mt-1">SETTINGS</span>
+                    </div>
+                </div>
+                
+                <!-- Bottom dock -->
+                <div class="flex justify-around items-center pb-4 pt-2 bg-black bg-opacity-40">
+                    <button class="flex flex-col items-center text-xs" onclick="openApp('terminal')">
+                        <i class="fas fa-terminal mb-1"></i>
+                        Terminal
+                    </button>
+                    <button class="flex flex-col items-center text-xs" onclick="openApp('missions')">
+                        <i class="fas fa-bullseye mb-1"></i>
+                        Missions
+                    </button>
+                    <button class="flex flex-col items-center text-xs" onclick="openApp('logs')">
+                        <i class="fas fa-database mb-1"></i>
+                        Logs
+                    </button>
                 </div>
             </div>
-            
-            <div class="mb-8">
-                <p id="result" class="text-2xl neon-text">Сделай свой выбор!</p>
-                <p class="text-xl">Счет: <span id="score" class="neon-text">0 - 0</span></p>
-            </div>
-            
-            <div class="flex flex-wrap justify-center gap-4 mb-8">
-                <button class="choice-btn neon-border px-6 py-3 text-4xl" data-choice="✊">✊</button>
-                <button class="choice-btn neon-border px-6 py-3 text-4xl" data-choice="✌️">✌️</button>
-                <button class="choice-btn neon-border px-6 py-3 text-4xl" data-choice="✋">✋</button>
-            </div>
-            
-            <button id="back1-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
         </div>
         
-        <!-- Game 2: Snake -->
-        <div id="game2-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-4 neon-text">ЗМЕЙКА</h2>
-            
-            <div class="mb-4">
-                <p class="text-xl">Счет: <span id="snake-score" class="neon-text">0</span></p>
-                <p class="text-xl">Рекорд: <span id="snake-highscore" class="neon-text">0</span></p>
+        <!-- Terminal App -->
+        <div id="terminalApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-green-600">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">TERMINAL</div>
+                    <div class="text-xs">USER: ROOT</div>
+                </div>
+                
+                <div id="terminalContent" class="terminal flex-1 p-2 overflow-y-auto scrollbar-hide text-xs leading-5">
+                    <div class="mb-2">Last login: Today 21:37 from undefined location</div>
+                    <div class="mb-2">HACKER OS v3.1.4</div>
+                    <div class="mb-2">Type <span class="text-yellow-400">'help'</span> for available commands</div>
+                    <div class="flex items-start">
+                        <span class="text-yellow-400 mr-1">root@hackerphone:~#</span>
+                        <span id="commandDisplay" class="flex-1"></span>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 border-t border-green-600">
+                    <div class="flex">
+                        <input id="commandInput" type="text" class="flex-1 bg-transparent border border-green-600 px-2 py-1 text-xs focus:outline-none" placeholder="Enter command..." autocomplete="off">
+                        <button onclick="executeCommand()" class="hacker-btn px-3 py-1 ml-2 text-xs">
+                            EXEC
+                        </button>
+                    </div>
+                </div>
             </div>
-            
-            <canvas id="game2-canvas" class="game-canvas" width="400" height="400"></canvas>
-            
-            <div class="mobile-controls">
-                <div></div>
-                <button id="snake-up" class="mobile-btn"><i class="fas fa-arrow-up"></i></button>
-                <div></div>
-                <button id="snake-left" class="mobile-btn"><i class="fas fa-arrow-left"></i></button>
-                <button id="snake-down" class="mobile-btn"><i class="fas fa-arrow-down"></i></button>
-                <button id="snake-right" class="mobile-btn"><i class="fas fa-arrow-right"></i></button>
-            </div>
-            
-            <button id="back2-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
         </div>
         
-        <!-- Game 3: Air Combat -->
-        <div id="game3-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-4 neon-text">ВОЗДУШНЫЙ БОЙ</h2>
-            
-            <div class="mb-4">
-                <p class="text-xl">Счет: <span id="combat-score" class="neon-text">0</span></p>
-                <p class="text-xl">Жизни: <span id="combat-lives" class="neon-text">3</span></p>
+        <!-- Missions App -->
+        <div id="missionsApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-red-500">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">ACTIVE MISSIONS</div>
+                    <div class="text-xs">REP: <span id="repScore">65</span></div>
+                </div>
+                
+                <div class="p-2 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="p-2 mb-2 hacker-btn rounded">
+                        <div class="flex justify-between items-start">
+                            <div class="text-red-400 glow">NEW MISSION</div>
+                            <div class="text-xs">DIFFICULTY: <span class="text-yellow-400">MEDIUM</span></div>
+                        </div>
+                        <div class="text-xs mt-1 typewriter">Retrieve confidential data from megacorp server</div>
+                        <div class="text-xs mt-2">REWARD: <span class="text-green-400">$15,000</span></div>
+                        <button onclick="acceptMission()" class="hacker-btn w-full mt-2 py-1 text-xs pulse">
+                            ACCEPT MISSION
+                        </button>
+                    </div>
+                    
+                    <div class="p-2 mb-2 border border-gray-700 rounded">
+                        <div class="flex justify-between items-start">
+                            <div class="text-blue-400 glow">IN PROGRESS</div>
+                            <div class="text-xs">DIFFICULTY: <span class="text-green-400">EASY</span></div>
+                        </div>
+                        <div class="text-xs mt-1">Find and exploit vulnerability on zonaxx.com</div>
+                        <div class="text-xs mt-2">REWARD: <span class="text-green-400">$5,000</span></div>
+                        <div class="h-1 w-full bg-gray-800 mt-2">
+                            <div class="h-1 bg-yellow-400" style="width: 40%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-2 mb-2 border border-gray-700 rounded opacity-50">
+                        <div class="flex justify-between items-start">
+                            <div>LOCKED</div>
+                            <div class="text-xs">REQUIRES REP <span class="text-red-400">80+</span></div>
+                        </div>
+                        <div class="text-xs mt-1">Penetrate government secure network</div>
+                        <div class="text-xs mt-2">REWARD: <span class="text-green-400">$50,000</span></div>
+                    </div>
+                </div>
             </div>
-            
-            <canvas id="game3-canvas" class="game-canvas" width="600" height="400"></canvas>
-            
-            <div class="mobile-controls">
-                <div></div>
-                <button id="combat-up" class="mobile-btn"><i class="fas fa-arrow-up"></i></button>
-                <div></div>
-                <button id="combat-left" class="mobile-btn"><i class="fas fa-arrow-left"></i></button>
-                <button id="combat-shoot" class="mobile-btn"><i class="fas fa-bolt"></i></button>
-                <button id="combat-right" class="mobile-btn"><i class="fas fa-arrow-right"></i></button>
-            </div>
-            
-            <button id="back3-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
         </div>
-
-        <!-- Game 4: Flappy Bird -->
-        <div id="game4-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-4 neon-text">FLAPPY BIRD</h2>
-            
-            <div class="mb-4">
-                <p class="text-xl">Счет: <span id="flappy-score" class="neon-text">0</span></p>
-                <p class="text-xl">Рекорд: <span id="flappy-highscore" class="neon-text">0</span></p>
+        
+        <!-- Tools App -->
+        <div id="toolsApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-blue-500">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">TOOLKIT v2.4</div>
+                    <div class="text-xs">RAM: 64%</div>
+                </div>
+                
+                <div class="p-2 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="p-2 border border-blue-500 rounded">
+                            <div class="text-blue-400 glow">SCANNER</div>
+                            <div class="text-xs mt-1">Network reconnaissance</div>
+                            <div class="flex justify-between mt-2">
+                                <span class="text-xs">VERSION: 4.2</span>
+                                <button onclick="runTool('scanner')" class="hacker-btn px-2 py-0.5 text-xs">
+                                    RUN
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 border border-blue-500 rounded">
+                            <div class="text-blue-400 glow">CRACKER</div>
+                            <div class="text-xs mt-1">Password decryption</div>
+                            <div class="flex justify-between mt-2">
+                                <span class="text-xs">VERSION: 2.1</span>
+                                <button onclick="runTool('cracker')" class="hacker-btn px-2 py-0.5 text-xs">
+                                    RUN
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 border border-blue-500 rounded opacity-50">
+                            <div class="text-blue-400">EXPLOIT</div>
+                            <div class="text-xs mt-1">System vulnerability exploitation</div>
+                            <div class="flex justify-between mt-2">
+                                <span class="text-xs">LOCKED</span>
+                                <button disabled class="hacker-btn px-2 py-0.5 text-xs opacity-50">
+                                    LOCKED
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="p-2 border border-blue-500 rounded opacity-50">
+                            <div class="text-blue-400">STEALTH</div>
+                            <div class="text-xs mt-1">Anonymity tools</div>
+                            <div class="flex justify-between mt-2">
+                                <span class="text-xs">LOCKED</span>
+                                <button disabled class="hacker-btn px-2 py-0.5 text-xs opacity-50">
+                                    LOCKED
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 text-center border-t border-blue-500 text-xs">
+                    UPGRADE TOOLS IN BLACK MARKET
+                </div>
             </div>
-            
-            <canvas id="game4-canvas" class="game-canvas" width="400" height="600"></canvas>
-            
-            <div class="mobile-controls">
-                <div></div>
-                <button id="flappy-jump" class="mobile-btn"><i class="fas fa-arrow-up"></i></button>
-                <div></div>
-            </div>
-            
-            <button id="back4-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
         </div>
-
-        <!-- Game 5: Space Invaders -->
-        <div id="game5-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-4 neon-text">SPACE INVADERS</h2>
-            
-            <div class="mb-4">
-                <p class="text-xl">Счет: <span id="invaders-score" class="neon-text">0</span></p>
-                <p class="text-xl">Жизни: <span id="invaders-lives" class="neon-text">3</span></p>
+        
+        <!-- Contacts App -->
+        <div id="contactsApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-yellow-500">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">TRUSTED CONTACTS</div>
+                    <div class="text-xs">ENCRYPTED</div>
+                </div>
+                
+                <div class="p-2 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="flex items-center p-2 border border-yellow-500 rounded mb-2">
+                        <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center mr-2">
+                            <i class="fas fa-user text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <div class="text-yellow-400 glow">SELLER_13</div>
+                                <div class="text-xs pulse">ONLINE</div>
+                            </div>
+                            <div class="text-xs">Data broker</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center p-2 border border-yellow-500 rounded mb-2">
+                        <div class="w-8 h-8 bg-yellow-600 rounded-full flex items-center justify-center mr-2">
+                            <i class="fas fa-user text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <div class="text-yellow-400 glow">MR.K</div>
+                                <div class="text-xs">OFFLINE</div>
+                            </div>
+                            <div class="text-xs">Security expert</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center p-2 border border-gray-600 rounded mb-2 opacity-50">
+                        <div class="w-8 h-8 bg-gray-600 rounded-full flex items-center justify-center mr-2">
+                            <i class="fas fa-lock text-xs"></i>
+                        </div>
+                        <div class="flex-1">
+                            <div>LOCKED CONTACT</div>
+                            <div class="text-xs">REQUIRES REP 75+</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 text-center border-t border-yellow-500 text-xs">
+                    SECURE CHANNEL ESTABLISHED
+                </div>
             </div>
-            
-            <canvas id="game5-canvas" class="game-canvas" width="600" height="600"></canvas>
-            
-            <div class="mobile-controls">
-                <div></div>
-                <button id="invaders-shoot" class="mobile-btn"><i class="fas fa-bolt"></i></button>
-                <div></div>
-                <button id="invaders-left" class="mobile-btn"><i class="fas fa-arrow-left"></i></button>
-                <button id="invaders-right" class="mobile-btn"><i class="fas fa-arrow-right"></i></button>
-                <div></div>
-            </div>
-            
-            <button id="back5-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
         </div>
-
-        <!-- Game 6: Pong -->
-        <div id="game6-container" class="game-container text-center">
-            <h2 class="game-title text-3xl md:text-4xl font-bold mb-4 neon-text">ПОНГ</h2>
-            
-            <div class="mb-4">
-                <p class="text-xl">Игрок: <span id="pong-player-score" class="neon-text">0</span></p>
-                <p class="text-xl">Компьютер: <span id="pong-computer-score" class="neon-text">0</span></p>
+        
+        <!-- Logs App -->
+        <div id="logsApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-purple-500">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">DATA LOGS</div>
+                    <div class="text-xs">ENC: AES-256</div>
+                </div>
+                
+                <div class="p-2 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="text-center text-xs py-2 border-b border-gray-700">TODAY</div>
+                    
+                    <div class="p-2 border border-purple-500 rounded mb-2">
+                        <div class="flex justify-between">
+                            <div class="text-purple-400 glow">21:13</div>
+                            <div class="text-xs">SUCCESS</div>
+                        </div>
+                        <div class="text-xs mt-1">Found SQL injection on target.com</div>
+                    </div>
+                    
+                    <div class="p-2 border border-purple-500 rounded mb-2">
+                        <div class="flex justify-between">
+                            <div class="text-purple-400 glow">19:42</div>
+                            <div class="text-xs">SUCCESS</div>
+                        </div>
+                        <div class="text-xs mt-1">Extracted database from zonaxx.com</div>
+                    </div>
+                    
+                    <div class="text-center text-xs py-2 border-b border-gray-700 mt-4">YESTERDAY</div>
+                    
+                    <div class="p-2 border border-purple-500 rounded mb-2">
+                        <div class="flex justify-between">
+                            <div class="text-purple-400 glow">16:28</div>
+                            <div class="text-xs text-red-400">FAILED</div>
+                        </div>
+                        <div class="text-xs mt-1">Blocked by firewall on secure.gov</div>
+                    </div>
+                    
+                    <div class="p-2 border border-purple-500 rounded mb-2 bg-black bg-opacity-20">
+                        <div class="flex justify-between">
+                            <div class="text-purple-400 glow">14:13</div>
+                            <div class="text-xs">SUCCESS</div>
+                        </div>
+                        <div class="text-xs mt-1">Hacked security cameras - bank HQ</div>
+                        <div class="text-xs mt-1 italic">3 files attached</div>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 text-center border-t border-purple-500 text-xs">
+                    LOGS AUTOMATICALLY PURGED AFTER 7 DAYS
+                </div>
             </div>
-            
-            <canvas id="game6-canvas" class="game-canvas" width="600" height="400"></canvas>
-            
-            <div class="mobile-controls">
-                <div></div>
-                <button id="pong-up" class="mobile-btn"><i class="fas fa-arrow-up"></i></button>
-                <div></div>
-                <button id="pong-down" class="mobile-btn"><i class="fas fa-arrow-down"></i></button>
-                <div></div>
+        </div>
+        
+        <!-- Network App -->
+        <div id="networkApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-teal-400">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">NETWORK CONTROL</div>
+                    <div class="text-xs">VPN: ACTIVE</div>
+                </div>
+                
+                <div class="p-4 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="border border-teal-400 rounded-lg p-3 mb-4">
+                        <div class="text-center text-teal-300 glow mb-2">CONNECTION STATUS</div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>IP ADDRESS:</span>
+                            <span class="text-yellow-400">13.37.92.44 (MASKED)</span>
+                        </div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>LOCATION:</span>
+                            <span class="text-yellow-400">UNKNOWN</span>
+                        </div>
+                        <div class="flex justify-between text-xs mb-1">
+                            <span>SECURITY:</span>
+                            <span class="text-green-400">HIGH</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span>TRACKERS:</span>
+                            <span class="text-green-400">0 DETECTED</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-teal-400 rounded-lg p-3">
+                        <div class="text-center text-teal-300 glow mb-2">NETWORK TOOLS</div>
+                        <button onclick="runNetworkTool('scan')" class="hacker-btn w-full py-2 mb-2 flex items-center justify-center">
+                            <i class="fas fa-search mr-2"></i> SCAN NETWORK
+                        </button>
+                        <button onclick="runNetworkTool('spoof')" class="hacker-btn w-full py-2 mb-2 flex items-center justify-center opacity-50" disabled>
+                            <i class="fas fa-random mr-2"></i> IP SPOOFER (LOCKED)
+                        </button>
+                        <button onclick="runNetworkTool('ddos')" class="hacker-btn w-full py-2 flex items-center justify-center opacity-50" disabled>
+                            <i class="fas fa-bolt mr-2"></i> DDOS (LOCKED)
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 text-center border-t border-teal-400 text-xs">
+                    ENCRYPTED TUNNEL ACTIVE | LATENCY: 37ms
+                </div>
             </div>
-            
-            <button id="back6-btn" class="neon-border px-6 py-3 text-xl mt-4">
-                <i class="fas fa-arrow-left mr-2"></i> Назад
-            </button>
+        </div>
+        
+        <!-- Market App -->
+        <div id="marketApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-orange-400">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">BLACK MARKET</div>
+                    <div class="text-xs">BITCOINS: <span id="bitcoinBalance" class="text-orange-400">0.0342</span></div>
+                </div>
+                
+                <div class="p-2 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="text-center text-xs py-2 border-b border-gray-700 mb-2">UPDATED 5 MIN AGO</div>
+                    
+                    <div class="border border-orange-400 rounded-lg p-3 mb-3">
+                        <div class="text-orange-300 glow">EXPLOIT FRAMEWORK v5.2</div>
+                        <div class="text-xs my-2">Advanced penetration testing toolkit with 120+ exploits</div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-xs">PRICE: <span class="text-orange-400">0.025 BTC</span></div>
+                            <button onclick="buyItem('exploit')" class="hacker-btn px-3 py-1 text-xs">
+                                BUY
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-orange-400 rounded-lg p-3 mb-3 opacity-50">
+                        <div class="text-orange-300">ZERO-DAY EXPLOIT</div>
+                        <div class="text-xs my-2">Unpatched Windows vulnerability (REP 80+ REQUIRED)</div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-xs">PRICE: <span class="text-orange-400">0.15 BTC</span></div>
+                            <button disabled class="hacker-btn px-3 py-1 text-xs opacity-50">
+                                LOCKED
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-orange-400 rounded-lg p-3">
+                        <div class="text-orange-300 glow">STEALTH MODULE v3.1</div>
+                        <div class="text-xs my-2">Military-grade anonymity tools and track cleaners</div>
+                        <div class="flex justify-between items-center">
+                            <div class="text-xs">PRICE: <span class="text-orange-400">0.018 BTC</span></div>
+                            <button onclick="buyItem('stealth')" class="hacker-btn px-3 py-1 text-xs">
+                                BUY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-2 bg-black bg-opacity-70 text-center border-t border-orange-400 text-xs">
+                    TOR ACCESS ONLY | ALL TRANSACTIONS FINAL
+                </div>
+            </div>
+        </div>
+        
+        <!-- Settings App -->
+        <div id="settingsApp" class="hidden h-full pt-10">
+            <div class="flex flex-col h-full">
+                <div class="flex items-center p-2 bg-black bg-opacity-70 justify-between border-b border-gray-400">
+                    <button onclick="closeApp()" class="text-xs flex items-center">
+                        <i class="fas fa-arrow-left mr-1"></i> BACK
+                    </button>
+                    <div class="text-xs glow">SYSTEM SETTINGS</div>
+                    <div class="text-xs">PRIVACY MODE: ON</div>
+                </div>
+                
+                <div class="p-4 overflow-y-auto scrollbar-hide flex-1">
+                    <div class="border border-gray-500 rounded-lg p-3 mb-4">
+                        <div class="text-center text-gray-300 glow mb-3">SYSTEM STATUS</div>
+                        
+                        <div class="flex justify-between text-xs mb-2">
+                            <span>OS VERSION:</span>
+                            <span class="text-yellow-400">HACKER OS 3.1.4</span>
+                        </div>
+                        <div class="flex justify-between text-xs mb-2">
+                            <span>SECURITY LEVEL:</span>
+                            <span class="text-green-400">PARANOID</span>
+                        </div>
+                        <div class="flex justify-between text-xs mb-2">
+                            <span>ACTIVE CONNECTIONS:</span>
+                            <span class="text-yellow-400">7</span>
+                        </div>
+                        <div class="flex justify-between text-xs">
+                            <span>LAST INTRUSION:</span>
+                            <span class="text-green-400">NONE DETECTED</span>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-gray-500 rounded-lg p-3 mb-4">
+                        <div class="text-center text-gray-300 glow mb-3">PREFERENCES</div>
+                        
+                        <div class="flex justify-between items-center text-xs mb-2">
+                            <span>DARK MODE:</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-xs mb-2">
+                            <span>TERMINAL FONT:</span>
+                            <select class="bg-black border border-gray-600 text-xs p-1">
+                                <option>Hacker</option>
+                                <option>Classic</option>
+                                <option disabled>Modern (locked)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-xs">
+                            <span>SOUND EFFECTS:</span>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" checked class="sr-only peer">
+                                <div class="w-9 h-5 bg-gray-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-green-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="border border-red-500 rounded-lg p-3">
+                        <div class="text-center text-red-400 glow mb-3">DANGER ZONE</div>
+                        
+                        <button onclick="factoryReset()" class="hacker-btn w-full py-2 mb-2 text-red-400 border border-red-500 flex items-center justify-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i> FACTORY RESET
+                        </button>
+                        <button onclick="selfDestruct()" class="hacker-btn w-full py-2 text-red-400 border border-red-500 flex items-center justify-center">
+                            <i class="fas fa-skull-crossbones mr-2"></i> SELF DESTRUCT
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // Game Selection Logic
-        const gameSelection = document.getElementById('game-selection');
-        const gameContainers = [
-            document.getElementById('game1-container'),
-            document.getElementById('game2-container'),
-            document.getElementById('game3-container'),
-            document.getElementById('game4-container'),
-            document.getElementById('game5-container'),
-            document.getElementById('game6-container')
-        ];
+        let currentApp = 'home';
+        let selectedTool = null;
+        let commands = [];
+        let commandHistory = [];
+        let historyIndex = -1;
         
-        for (let i = 0; i < 6; i++) {
-            document.getElementById(`game${i+1}-btn`).addEventListener('click', () => {
-                gameSelection.classList.add('fade-out');
-                setTimeout(() => {
-                    gameSelection.style.display = 'none';
-                    gameContainers[i].style.display = 'block';
-                    gameContainers[i].classList.add('fade-in');
-                    
-                    // Initialize the selected game
-                    if (i === 1) initSnakeGame();
-                    if (i === 2) initCombatGame();
-                    if (i === 3) initFlappyGame();
-                    if (i === 4) initInvadersGame();
-                    if (i === 5) initPongGame();
-                }, 500);
-            });
+        function openApp(app) {
+            if (currentApp === app) return;
             
-            document.getElementById(`back${i+1}-btn`).addEventListener('click', backToMenu);
+            document.getElementById(`${currentApp}Screen`).classList.add('hidden');
+            document.getElementById(`${app}App`).classList.remove('hidden');
+            currentApp = app;
+            
+            if (app === 'terminal') {
+                setTimeout(() => {
+                    document.getElementById('commandInput').focus();
+                    updateTerminalDisplay('pwd');
+                }, 100);
+            }
         }
         
-        function backToMenu() {
-            const currentGame = document.querySelector('.game-container[style*="display: block"]');
-            if (!currentGame) return;
-            
-            currentGame.classList.add('fade-out');
-            
+        function closeApp() {
+            document.getElementById(`${currentApp}App`).classList.add('hidden');
+            document.getElementById('homeScreen').classList.remove('hidden');
+            currentApp = 'home';
+        }
+        
+        function acceptMission() {
+            alert('Mission accepted! Check your terminal for details.');
+            openApp('terminal');
             setTimeout(() => {
-                currentGame.style.display = 'none';
-                // Stop any game loops for the current game
-                cancelAnimationFrame(window.currentAnimationId);
-                
-                gameSelection.style.display = 'block';
-                gameSelection.classList.remove('fade-out');
-                gameSelection.classList.add('fade-in');
+                updateTerminalDisplay('mission start');
             }, 500);
         }
         
-        // Game 1: Rock Paper Scissors
-        const choices = ['✊', '✌️', '✋'];
-        let playerScore = 0;
-        let computerScore = 0;
-        
-        document.querySelectorAll('.choice-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const playerChoice = button.dataset.choice;
-                const computerChoice = choices[Math.floor(Math.random() * 3)];
-                
-                document.getElementById('player-choice').textContent = playerChoice;
-                document.getElementById('computer-choice').textContent = computerChoice;
-                
-                const result = getResult(playerChoice, computerChoice);
-                document.getElementById('result').textContent = result;
-                
-                if (result.includes('Победил')) playerScore++;
-                if (result.includes('Проиграл')) computerScore++;
-                
-                document.getElementById('score').textContent = `${playerScore} - ${computerScore}`;
-            });
-        });
-        
-        function getResult(player, computer) {
-            if (player === computer) return 'Ничья!';
-            
-            if (
-                (player === '✊' && computer === '✌️') ||
-                (player === '✌️' && computer === '✋') ||
-                (player === '✋' && computer === '✊')
-            ) {
-                return 'Победил игрок!';
-            }
-            
-            return 'Проиграл!';
+        function runTool(tool) {
+            openApp('terminal');
+            setTimeout(() => {
+                updateTerminalDisplay(tool);
+            }, 500);
         }
         
-        // Game 2: Snake
-        function initSnakeGame() {
-            const canvas = document.getElementById('game2-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Adjust canvas size for mobile
-            if (window.innerWidth < 768) {
-                const size = Math.min(window.innerWidth - 40, 400);
-                canvas.width = size;
-                canvas.height = size;
-            }
-            
-            const box = 20;
-            let snake = [{x: 9 * box, y: 10 * box}];
-            let food = {
-                x: Math.floor(Math.random() * (canvas.width / box)) * box,
-                y: Math.floor(Math.random() * (canvas.height / box)) * box
-            };
-            let d = null;
-            let score = 0;
-            let highScore = localStorage.getItem('snakeHighScore') || 0;
-            let game;
-            
-            document.getElementById('snake-highscore').textContent = highScore;
-            
-            // Draw functions
-            function draw() {
-                // Clear canvas
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw snake
-                snake.forEach((segment, index) => {
-                    ctx.fillStyle = index === 0 ? '#00ff00' : '#00cc00';
-                    ctx.fillRect(segment.x, segment.y, box, box);
-                    ctx.strokeStyle = '#003300';
-                    ctx.strokeRect(segment.x, segment.y, box, box);
-                });
-                
-                // Draw food
-                ctx.fillStyle = '#ff0000';
-                ctx.beginPath();
-                ctx.arc(food.x + box/2, food.y + box/2, box/2, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw score
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, 10, 20);
-            }
-            
-            // Game loop
-            function gameLoop() {
-                if (d === null) {
-                    draw();
-                    window.currentAnimationId = requestAnimationFrame(gameLoop);
-                    return;
-                }
-                
-                // Move snake
-                let head = {x: snake[0].x, y: snake[0].y};
-                
-                if (d === 'LEFT') head.x -= box;
-                if (d === 'UP') head.y -= box;
-                if (d === 'RIGHT') head.x += box;
-                if (d === 'DOWN') head.y += box;
-                
-                // Check collision with walls
-                if (
-                    head.x < 0 || 
-                    head.y < 0 || 
-                    head.x >= canvas.width || 
-                    head.y >= canvas.height
-                ) {
-                    gameOver();
-                    return;
-                }
-                
-                // Check collision with self
-                for (let i = 0; i < snake.length; i++) {
-                    if (head.x === snake[i].x && head.y === snake[i].y) {
-                        gameOver();
-                        return;
-                    }
-                }
-                
-                // Check if snake eats food
-                if (head.x === food.x && head.y === food.y) {
-                    score++;
-                    document.getElementById('snake-score').textContent = score;
-                    
-                    food = {
-                        x: Math.floor(Math.random() * (canvas.width / box)) * box,
-                        y: Math.floor(Math.random() * (canvas.height / box)) * box
-                    };
-                } else {
-                    snake.pop();
-                }
-                
-                snake.unshift(head);
-                
-                draw();
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            function gameOver() {
-                cancelAnimationFrame(window.currentAnimationId);
-                
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem('snakeHighScore', highScore);
-                    document.getElementById('snake-highscore').textContent = highScore;
-                }
-                
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#ff0000';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                ctx.fillText('Игра окончена!', canvas.width/2, canvas.height/2 - 30);
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, canvas.width/2, canvas.height/2 + 10);
-                ctx.fillText(`Нажмите любую клавишу`, canvas.width/2, canvas.height/2 + 40);
-                ctx.fillText(`чтобы начать заново`, canvas.width/2, canvas.height/2 + 70);
-                
-                document.addEventListener('keydown', resetGame);
-                document.getElementById('snake-up').addEventListener('click', resetGame);
-                document.getElementById('snake-down').addEventListener('click', resetGame);
-                document.getElementById('snake-left').addEventListener('click', resetGame);
-                document.getElementById('snake-right').addEventListener('click', resetGame);
-            }
-            
-            function resetGame() {
-                document.removeEventListener('keydown', resetGame);
-                document.getElementById('snake-up').removeEventListener('click', resetGame);
-                document.getElementById('snake-down').removeEventListener('click', resetGame);
-                document.getElementById('snake-left').removeEventListener('click', resetGame);
-                document.getElementById('snake-right').removeEventListener('click', resetGame);
-                
-                snake = [{x: 9 * box, y: 10 * box}];
-                food = {
-                    x: Math.floor(Math.random() * (canvas.width / box)) * box,
-                    y: Math.floor(Math.random() * (canvas.height / box)) * box
-                };
-                d = null;
-                score = 0;
-                document.getElementById('snake-score').textContent = score;
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            // Controls
-            document.addEventListener('keydown', direction);
-            
-            function direction(e) {
-                if (e.keyCode === 37 && d !== 'RIGHT') d = 'LEFT';
-                if (e.keyCode === 38 && d !== 'DOWN') d = 'UP';
-                if (e.keyCode === 39 && d !== 'LEFT') d = 'RIGHT';
-                if (e.keyCode === 40 && d !== 'UP') d = 'DOWN';
-            }
-            
-            // Mobile controls
-            document.getElementById('snake-up').addEventListener('click', () => {
-                if (d !== 'DOWN') d = 'UP';
-            });
-            
-            document.getElementById('snake-down').addEventListener('click', () => {
-                if (d !== 'UP') d = 'DOWN';
-            });
-            
-            document.getElementById('snake-left').addEventListener('click', () => {
-                if (d !== 'RIGHT') d = 'LEFT';
-            });
-            
-            document.getElementById('snake-right').addEventListener('click', () => {
-                if (d !== 'LEFT') d = 'RIGHT';
-            });
-            
-            // Start game
-            window.currentAnimationId = requestAnimationFrame(gameLoop);
-        }
-        
-        // Game 3: Air Combat - Fixed version
-        function initCombatGame() {
-            const canvas = document.getElementById('game3-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Adjust canvas size for mobile
-            if (window.innerWidth < 768) {
-                const width = Math.min(window.innerWidth - 40, 600);
-                const height = width * (2/3);
-                canvas.width = width;
-                canvas.height = height;
-            }
-            
-            // Player properties
-            const player = {
-                x: canvas.width / 2 - 25,
-                y: canvas.height - 60,
-                width: 50,
-                height: 50,
-                speed: 7,
-                color: '#00ffff'
-            };
-            
-            // Game state
-            const bullets = [];
-            const enemies = [];
-            let score = 0;
-            let lives = 3;
-            let gameOver = false;
-            let enemySpawnRate = 1000; // in milliseconds
-            let enemySpeed = 2;
-            let lastEnemySpawn = 0;
-            let isMovingLeft = false;
-            let isMovingRight = false;
-            
-            document.getElementById('combat-score').textContent = score;
-            document.getElementById('combat-lives').textContent = lives;
-            
-            // Player image
-            const playerImg = new Image();
-            playerImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjMDBmZmZmIiBkPSJNMjU2IDUxMmMxNDEuNCAwIDI1Ni0xMTQuNiAyNTYtMjU2UzM5Ny40IDAgMjU2IDBTMCAxMTQuNiAwIDI1NnMxMTQuNiAyNTYgMjU2IDI1NnptMC00ODBjMTIzLjUgMCAyMjQgMTAwLjUgMjI0IDIyNFMzNzkuNSA0ODAgMjU2IDQ4MFMzMiAzNzkuNSAzMiAyNTZTMzIuNSAzMiAyNTYgMzJ6bS04MCAxNjB2MTZjMCA0LjQtMy42IDgtOCA4cy04LTMuNi04LTh2LTE2YzAtNC40IDMuNi04IDgtOHM4IDMuNiA4IDh6bTcydjE2YzAgNC40LTMuNiA4LTggOHMtOC0zLjYtOC04di0xNmMwLTQuNCAzLjYtOCA4LThzOCAzLjYgOCA4em04LTU2YzQuNCAwIDgtMy42IDgtOHYtMTZjMC00LjQtMy42LTgtOC04cy04IDMuNi04IDh2MTZjMCA0LjQgMy42IDggOCA4em0xNjAgMTYwYzAgNC40LTMuNiA4LTggOGgtMTZjLTQuNCAwLTgtMy42LTgtOHYtMTZjMC00LjQgMy42LTggOC04aDE2YzQuNCAwIDggMy42IDggOHYxNnptLTU2LTgwdjE2YzAgNC40LTMuNiA4LTggOHMtOC0My42LTgtOHYtMTZjMC00LjQgMy42LTggOC04czggMy42IDggOHptLTU2LTY0djE2YzAgNC40LTMuNiA4LTggOHMtOC0My42LTgtOHYtMTZjMC00LjQgMy42LTggOC04czggMy42IDggOHoiLz48L3N2Zz4=';
-            
-            // Enemy image
-            const enemyImg = new Image();
-            enemyImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjZmYwMDAwIiBkPSJNMjU2IDUxMmMxNDEuNCAwIDI1Ni0xMTQuNiAyNTYtMjU2UzM5Ny40IDAgMjU2IDBTMCAxMTQuNiAwIDI1NnMxMTQuNiAyNTYgMjU2IDI1NnptMC00ODBjMTIzLjUgMCAyMjQgMTAwLjUgMjI0IDIyNFMzNzkuNSA0ODAgMjU2IDQ4MFMzMiAzNzkuNSAzMiAyNTZTMzIuNSAzMiAyNTYgMzJ6bS04MCAxNjB2MTZjMCA0LjQtMy42IDgtOCA4cy04LTMuNi04LTh2LTE2YzAtNC40IDMuNi04IDgtOHM4IDMuNiA4IDh6bTcydjE2YzAgNC40LTMuNiA4LTggOHMtOC0zLjYtOC04di0xNmMwLTQuNCAzLjYtOCA4LThzOCAzLjYgOCA4em04LTU2YzQuNCAwIDgtMy42IDgtOHYtMTZjMC00LjQtMy42LTgtOC04cy04IDMuNi04IDh2MTZjMCA0LjQgMy42IDggOCA4em0xNjAgMTYwYzAgNC40LTMuNiA4LTggOGgtMTZjLTQuNCAwLTgtMy42LTgtOHYtMTZjMC00LjQgMy42LTggOC04aDE2YzQuNCAwIDggMy42IDggOHYxNnptLTU2LTgwdjE2YzAgNC40LTMuNiA4LTggOHMtOC0My42LTgtOHYtMTZjMC00LjQgMy42LTggOC04czggMy42IDggOHptLTU2LTY0djE2YzAgNC40LTMuNiA8LTggOHMtOC0zLjYtOC04di0xNmMwLTQuNCAzLjYtOCA4LThzOCAzLjYgOCA4eiIvPjwvc3ZnPg==';
-            
-            // Game loop
-            function gameLoop(timestamp) {
-                if (gameOver) return;
-                
-                // Clear canvas
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw player
-                if (playerImg.complete) {
-                    ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-                } else {
-                    ctx.fillStyle = player.color;
-                    ctx.fillRect(player.x, player.y, player.width, player.height);
-                }
-                
-                // Player movement
-                if (isMovingLeft && player.x > 0) {
-                    player.x -= player.speed;
-                }
-                if (isMovingRight && player.x < canvas.width - player.width) {
-                    player.x += player.speed;
-                }
-                
-                // Spawn enemies
-                if (timestamp - lastEnemySpawn > enemySpawnRate) {
-                    spawnEnemy();
-                    lastEnemySpawn = timestamp;
-                    
-                    // Increase difficulty
-                    if (score > 0 && score % 5 === 0) {
-                        enemySpawnRate = Math.max(200, enemySpawnRate - 50);
-                        enemySpeed += 0.5;
-                    }
-                }
-                
-                // Update and draw bullets
-                for (let i = bullets.length - 1; i >= 0; i--) {
-                    bullets[i].y -= bullets[i].speed;
-                    ctx.fillStyle = '#ffff00';
-                    ctx.fillRect(bullets[i].x, bullets[i].y, bullets[i].width, bullets[i].height);
-                    
-                    // Remove bullets that are off screen
-                    if (bullets[i].y < 0) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-                    
-                    // Check bullet-enemy collision
-                    for (let j = enemies.length - 1; j >= 0; j--) {
-                        if (checkCollision(bullets[i], enemies[j])) {
-                            bullets.splice(i, 1);
-                            enemies.splice(j, 1);
-                            score++;
-                            document.getElementById('combat-score').textContent = score;
-                            break;
-                        }
-                    }
-                }
-                
-                // Update and draw enemies
-                for (let i = enemies.length - 1; i >= 0; i--) {
-                    enemies[i].y += enemies[i].speed;
-                    
-                    if (enemyImg.complete) {
-                        ctx.drawImage(enemyImg, enemies[i].x, enemies[i].y, enemies[i].width, enemies[i].height);
-                    } else {
-                        ctx.fillStyle = '#ff0000';
-                        ctx.fillRect(enemies[i].x, enemies[i].y, enemies[i].width, enemies[i].height);
-                    }
-                    
-                    // Remove enemies that are off screen
-                    if (enemies[i].y > canvas.height) {
-                        enemies.splice(i, 1);
-                        continue;
-                    }
-                    
-                    // Check player-enemy collision
-                    if (checkCollision(player, enemies[i])) {
-                        enemies.splice(i, 1);
-                        lives--;
-                        document.getElementById('combat-lives').textContent = lives;
-                        
-                        if (lives <= 0) {
-                            endGame();
-                            return;
-                        }
-                    }
-                }
-                
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            function spawnEnemy() {
-                enemies.push({
-                    x: Math.random() * (canvas.width - 50),
-                    y: -50,
-                    width: 50,
-                    height: 50,
-                    speed: enemySpeed
-                });
-            }
-            
-            function checkCollision(obj1, obj2) {
-                return obj1.x < obj2.x + obj2.width &&
-                       obj1.x + obj1.width > obj2.x &&
-                       obj1.y < obj2.y + obj2.height &&
-                       obj1.y + obj1.height > obj2.y;
-            }
-            
-            function shoot() {
-                bullets.push({
-                    x: player.x + player.width / 2 - 2.5,
-                    y: player.y,
-                    width: 5,
-                    height: 15,
-                    speed: 10
-                });
-            }
-            
-            function endGame() {
-                gameOver = true;
-                cancelAnimationFrame(window.currentAnimationId);
-                
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#ff0000';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                ctx.fillText('Игра окончена!', canvas.width/2, canvas.height/2 - 30);
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, canvas.width/2, canvas.height/2 + 10);
-                ctx.fillText(`Нажмите любую клавишу`, canvas.width/2, canvas.height/2 + 40);
-                ctx.fillText(`чтобы начать заново`, canvas.width/2, canvas.height/2 + 70);
-                
-                document.addEventListener('keydown', resetGame);
-                document.getElementById('combat-shoot').addEventListener('click', resetGame);
-            }
-            
-            function resetGame() {
-                document.removeEventListener('keydown', resetGame);
-                document.getElementById('combat-shoot').removeEventListener('click', resetGame);
-                
-                bullets.length = 0;
-                enemies.length = 0;
-                player.x = canvas.width / 2 - 25;
-                player.y = canvas.height - 60;
-                score = 0;
-                lives = 3;
-                enemySpawnRate = 1000;
-                enemySpeed = 2;
-                gameOver = false;
-                document.getElementById('combat-score').textContent = score;
-                document.getElementById('combat-lives').textContent = lives;
-                lastEnemySpawn = 0;
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (gameOver) return;
-                
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        isMovingLeft = true;
-                        break;
-                    case 'ArrowRight':
-                        isMovingRight = true;
-                        break;
-                    case ' ':
-                        shoot();
-                        break;
-                }
-            });
-            
-            document.addEventListener('keyup', (e) => {
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        isMovingLeft = false;
-                        break;
-                    case 'ArrowRight':
-                        isMovingRight = false;
-                        break;
-                }
-            });
-            
-            // Mobile controls
-            document.getElementById('combat-left').addEventListener('touchstart', () => {
-                isMovingLeft = true;
-            });
-            
-            document.getElementById('combat-left').addEventListener('touchend', () => {
-                isMovingLeft = false;
-            });
-            
-            document.getElementById('combat-right').addEventListener('touchstart', () => {
-                isMovingRight = true;
-            });
-            
-            document.getElementById('combat-right').addEventListener('touchend', () => {
-                isMovingRight = false;
-            });
-            
-            document.getElementById('combat-shoot').addEventListener('click', () => {
-                if (!gameOver) shoot();
-            });
-            
-            // Start game
-            window.currentAnimationId = requestAnimationFrame(gameLoop);
-        }
-
-        // Game 4: Flappy Bird
-        function initFlappyGame() {
-            const canvas = document.getElementById('game4-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Adjust canvas size
-            if (window.innerWidth < 768) {
-                const width = Math.min(window.innerWidth - 40, 400);
-                canvas.width = width;
-                canvas.height = width * 1.5;
-            }
-            
-            // Game variables
-            const bird = {
-                x: 50,
-                y: canvas.height / 2,
-                width: 30,
-                height: 30,
-                velocity: 0,
-                gravity: 0.5,
-                jumpForce: -10
-            };
-            
-            const pipes = [];
-            let score = 0;
-            let highScore = localStorage.getItem('flappyHighScore') || 0;
-            let gameOver = false;
-            let pipeSpawnRate = 1500; // milliseconds
-            let pipeGap = 150; // gap between top and bottom pipes
-            let lastPipeSpawn = 0;
-            let gameStarted = false;
-            
-            document.getElementById('flappy-highscore').textContent = highScore;
-            
-            // Bird image
-            const birdImg = new Image();
-            birdImg.src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwNC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cGF0aCBmaWxsPSIjZmZmZjAwIiBkPSJNNDUxIDEyOGMwLTM1LjMgMjguNy02NCA2NC02NGgxNnYxMjhoLTE2Yy0zNS4zIDAtNjQtMjguNy02NC02NHoiIG9wYWNpdHk9Ii4yNSIvPjxwYXRoIGZpbGw9IiNmZmZmMDAiIGQ9Ik0zODMgOTZjMC0zNS4zIDI4LjctNjQgNjQtNjRoMTZ2MTI4aC0xNmMtMzUuMyAwLTY0LTI4LjctNjQtNjR6IiBvcGFjaXR5PSIuNCIvPjxwYXRoIGZpbGw9IiNmZmZmMDAiIGQ9Ik0zMTkgNjRjMC0zNS4zIDI4LjctNjQgNjQtNjRoMTZ2MTI4aC0xNmMtMzUuMyAwLTY0LTI4LjctNjQtNjR6Ii8+PHBhdGggZmlsbD0iI2ZmZmYmZD0iTTI1NiA1MTJjMTQxLjQgMCAyNTYtMTE0LjYgMjU2LTI1NlMzOTcuNCAwIDI1NiAwUzAgMTE0LjYgMCAyNTZzMTE0LjYgMjU2IDI1NiAyNTZ6bS04MC0xNjBjMCA0NC4yLTM1LjggODAtODAgODBzLTgwLTM1LjgtODAtODBjMC0xMy4yIDMuMi0yNS42IDguOC0zNi44bDE0LjkgMjQuN2MxLjUgMi40IDMuOCA0IDYuNCA0IDQuMSAwIDcuMy0zLjkgNi40LTcuOS0xLjUtNi44LTcuOC0yNC4xLTcuOC0yNC44IDAtMi4yIDEuOC00IDQtNHM0IDEuOCA0IDRjMCAuOCA2LjMgMTggNy44IDI0LjguOSA0LTYuNCA3LjktNi40IDcuOXptMTQ0IDgwYzAtNDQuMi0zNS44LTgwLTgwLTgwcy04MCAzNS44LTgwIDgwYzAgMTMuMiAzLjIgMjUuNiA4LjggMzYuOGwxNC45LTI0LjdjMS41LTIuNCAzLjgtNC42LjQtNC42IDQuMSAwIDcuMyAzLjkgNi40IDcuOS0xLjUgNi44LTcuOCAyNC4xLTcuOCAyNC44IDAgMi4yIDEuOCA0IDQgNHM0LTEuOCA0LTRjMC0uOC02LjMtMTgtNy44LTI0LjgtLjktNCA2LjQtNy45IDYuNC03Ljl6IiBvcGFjaXR5PSIuMjUiLz48L3N2Zz4=';
-            
-            // Game loop
-            function gameLoop(timestamp) {
-                if (gameOver) return;
-                
-                // Clear canvas
-                ctx.fillStyle = '#0a0a0a';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw background
-                ctx.fillStyle = 'rgba(0, 20, 40, 0.5)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw pipes
-                pipes.forEach((pipe, index) => {
-                    pipe.x -= 2; // Move pipes to the left
-                    
-                    // Top pipe
-                    ctx.fillStyle = '#00aa00';
-                    ctx.fillRect(pipe.x, 0, pipe.width, pipe.topHeight);
-                    
-                    // Bottom pipe
-                    ctx.fillStyle = '#00aa00';
-                    ctx.fillRect(pipe.x, pipe.bottomY, pipe.width, canvas.height - pipe.bottomY);
-                    
-                    // If pipe is off screen, remove it
-                    if (pipe.x + pipe.width < 0) {
-                        pipes.splice(index, 1);
-                    }
-                    
-                    // Check if bird passed the pipe
-                    if (!pipe.passed && pipe.x + pipe.width < bird.x) {
-                        pipe.passed = true;
-                        score++;
-                        document.getElementById('flappy-score').textContent = score;
-                    }
-                    
-                    // Check collision with pipes
-                    if (
-                        bird.x + bird.width > pipe.x && 
-                        bird.x < pipe.x + pipe.width && 
-                        (bird.y < pipe.topHeight || bird.y + bird.height > pipe.bottomY)
-                    ) {
-                        endGame();
-                    }
-                });
-                
-                // Spawn new pipes
-                if (timestamp - lastPipeSpawn > pipeSpawnRate && gameStarted) {
-                    const topHeight = Math.floor(Math.random() * (canvas.height - pipeGap - 100)) + 50;
-                    pipes.push({
-                        x: canvas.width,
-                        width: 50,
-                        topHeight: topHeight,
-                        bottomY: topHeight + pipeGap,
-                        passed: false
-                    });
-                    
-                    lastPipeSpawn = timestamp;
-                    
-                    // Increase difficulty
-                    if (score > 0 && score % 5 === 0) {
-                        pipeSpawnRate = Math.max(1000, pipeSpawnRate - 100);
-                    }
-                }
-                
-                // Update bird physics
-                if (gameStarted) {
-                    bird.velocity += bird.gravity;
-                    bird.y += bird.velocity;
-                }
-                
-                // Draw bird
-                if (birdImg.complete) {
-                    ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
-                } else {
-                    ctx.fillStyle = '#ffff00';
-                    ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
-                }
-                
-                // Check bird collisions with ground and ceiling
-                if (bird.y + bird.height > canvas.height || bird.y < 0) {
-                    endGame();
-                }
-                
-                // Draw score
-                ctx.fillStyle = 'white';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                
-                if (!gameStarted) {
-                    ctx.fillText('Нажмите, чтобы прыгать!', canvas.width/2, canvas.height/2);
-                    ctx.font = '20px Orbitron';
-                    ctx.fillText('Используйте пробел или клик', canvas.width/2, canvas.height/2 + 30);
-                } else {
-                    // Show current score in the middle of the screen when game is running
-                    ctx.textAlign = 'center';
-                    ctx.fillText(score.toString(), canvas.width/2, 50);
-                }
-                
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            function jump() {
-                if (!gameStarted) {
-                    gameStarted = true;
-                    lastPipeSpawn = performance.now();
-                }
-                bird.velocity = bird.jumpForce;
-            }
-            
-            function endGame() {
-                gameOver = true;
-                cancelAnimationFrame(window.currentAnimationId);
-                
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem('flappyHighScore', highScore);
-                    document.getElementById('flappy-highscore').textContent = highScore;
-                }
-                
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#ff0000';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                ctx.fillText('Игра окончена!', canvas.width/2, canvas.height/2 - 30);
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, canvas.width/2, canvas.height/2 + 10);
-                ctx.fillText(`Рекорд: ${highScore}`, canvas.width/2, canvas.height/2 + 40);
-                ctx.fillText(`Нажмите любую клавишу`, canvas.width/2, canvas.height/2 + 70);
-                ctx.fillText(`чтобы начать заново`, canvas.width/2, canvas.height/2 + 100);
-                
-                document.addEventListener('keydown', resetGame);
-                document.getElementById('flappy-jump').addEventListener('click', resetGame);
-            }
-            
-            function resetGame() {
-                document.removeEventListener('keydown', resetGame);
-                document.getElementById('flappy-jump').removeEventListener('click', resetGame);
-                
-                bird.y = canvas.height / 2;
-                bird.velocity = 0;
-                pipes.length = 0;
-                score = 0;
-                gameOver = false;
-                gameStarted = false;
-                pipeSpawnRate = 1500;
-                document.getElementById('flappy-score').textContent = score;
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (e.code === 'Space') {
-                    e.preventDefault();
-                    if (gameOver) return;
-                    jump();
-                }
-            });
-            
-            // Mouse/touch controls
-            canvas.addEventListener('click', () => {
-                if (gameOver) return;
-                jump();
-            });
-            
-            // Mobile button
-            document.getElementById('flappy-jump').addEventListener('click', () => {
-                if (gameOver) return;
-                jump();
-            });
-            
-            // Start game
-            window.currentAnimationId = requestAnimationFrame(gameLoop);
-        }
-
-        // Game 5: Space Invaders
-        function initInvadersGame() {
-            const canvas = document.getElementById('game5-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Adjust canvas size
-            if (window.innerWidth < 768) {
-                const size = Math.min(window.innerWidth - 40, 600);
-                canvas.width = size;
-                canvas.height = size;
-            }
-            
-            // Game variables
-            const player = {
-                x: canvas.width / 2 - 25,
-                y: canvas.height - 60,
-                width: 50,
-                height: 50,
-                speed: 7,
-                color: '#00ffff'
-            };
-            
-            const bullets = [];
-            const invaders = [];
-            let score = 0;
-            let lives = 3;
-            let gameOver = false;
-            let invaderDirection = 1;
-            let invaderSpeed = 1;
-            let invaderDrop = 0;
-            let lastInvaderMove = 0;
-            let invaderMoveRate = 1000; // milliseconds
-            let lastBulletTime = 0;
-            let bulletDelay = 500; // milliseconds
-            let isMovingLeft = false;
-            let isMovingRight = false;
-            
-            // Create invaders
-            function createInvaders() {
-                const rows = 5;
-                const cols = 8;
-                const padding = 20;
-                const invaderWidth = 40;
-                const invaderHeight = 40;
-                
-                for (let r = 0; r < rows; r++) {
-                    for (let c = 0; c < cols; c++) {
-                        invaders.push({
-                            x: c * (invaderWidth + padding) + 50,
-                            y: r * (invaderHeight + padding) + 50,
-                            width: invaderWidth,
-                            height: invaderHeight,
-                            color: r % 2 === 0 ? '#ff00ff' : '#ff9900'
-                        });
-                    }
-                }
-            }
-            
-            // Start with fresh invaders
-            createInvaders();
-            
-            // Game loop
-            function gameLoop(timestamp) {
-                if (gameOver) return;
-                
-                // Clear canvas
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw player
-                ctx.fillStyle = player.color;
-                ctx.fillRect(player.x, player.y, player.width, player.height);
-                
-                // Player movement
-                if (isMovingLeft && player.x > 0) {
-                    player.x -= player.speed;
-                }
-                if (isMovingRight && player.x < canvas.width - player.width) {
-                    player.x += player.speed;
-                }
-                
-                // Move invaders
-                if (timestamp - lastInvaderMove > invaderMoveRate) {
-                    let shouldChangeDirection = false;
-                    let reachedBottom = false;
-                    
-                    // Check if any invader hits the side
-                    invaders.forEach(invader => {
-                        if (
-                            (invader.x + invader.width > canvas.width && invaderDirection === 1) ||
-                            (invader.x < 0 && invaderDirection === -1)
-                        ) {
-                            shouldChangeDirection = true;
-                        }
-                        
-                        // Check if invaders reach bottom
-                        if (invader.y + invader.height > player.y) {
-                            reachedBottom = true;
-                        }
-                    });
-                    
-                    if (shouldChangeDirection) {
-                        invaderDirection *= -1;
-                        invaderDrop = 20;
-                    }
-                    
-                    // Move invaders
-                    invaders.forEach(invader => {
-                        invader.x += invaderSpeed * invaderDirection;
-                        invader.y += invaderDrop;
-                    });
-                    
-                    invaderDrop = 0;
-                    lastInvaderMove = timestamp;
-                    
-                    // Check if game is over (invaders reached bottom)
-                    if (reachedBottom) {
-                        endGame();
-                        return;
-                    }
-                    
-                    // Increase speed as invaders are killed
-                    invaderSpeed = 1 + (1 - (invaders.length / 40)) * 2;
-                    invaderMoveRate = Math.max(200, 1000 - (40 - invaders.length) * 20);
-                }
-                
-                // Draw invaders
-                invaders.forEach(invader => {
-                    ctx.fillStyle = invader.color;
-                    ctx.beginPath();
-                    ctx.arc(invader.x + invader.width/2, invader.y + invader.height/2, invader.width/2, 0, Math.PI * 2);
-                    ctx.fill();
-                });
-                
-                // Update and draw bullets
-                for (let i = bullets.length - 1; i >= 0; i--) {
-                    bullets[i].y += bullets[i].speed;
-                    ctx.fillStyle = bullets[i].color;
-                    ctx.fillRect(bullets[i].x, bullets[i].y, bullets[i].width, bullets[i].height);
-                    
-                    // Remove bullets that are off screen
-                    if (bullets[i].y < 0 || bullets[i].y > canvas.height) {
-                        bullets.splice(i, 1);
-                        continue;
-                    }
-                    
-                    // Check bullet collisions
-                    if (bullets[i].speed < 0) { // Player bullet (moving up)
-                        for (let j = invaders.length - 1; j >= 0; j--) {
-                            if (
-                                bullets[i].x < invaders[j].x + invaders[j].width &&
-                                bullets[i].x + bullets[i].width > invaders[j].x &&
-                                bullets[i].y < invaders[j].y + invaders[j].height &&
-                                bullets[i].y + bullets[i].height > invaders[j].y
-                            ) {
-                                // Collision detected
-                                bullets.splice(i, 1);
-                                invaders.splice(j, 1);
-                                score += 10;
-                                document.getElementById('invaders-score').textContent = score;
-                                break;
-                            }
-                        }
-                    }
-                }
-                
-                // Random enemy shooting
-                if (invaders.length > 0 && Math.random() < 0.01) {
-                    const shooter = invaders[Math.floor(Math.random() * invaders.length)];
-                    bullets.push({
-                        x: shooter.x + shooter.width/2 - 2.5,
-                        y: shooter.y + shooter.height,
-                        width: 5,
-                        height: 15,
-                        speed: 5,
-                        color: '#ff0000'
-                    });
-                }
-                
-                // Check if player is hit by enemy bullet
-                for (let i = bullets.length - 1; i >= 0; i--) {
-                    if (
-                        bullets[i].speed > 0 && // Enemy bullet (moving down)
-                        bullets[i].x < player.x + player.width &&
-                        bullets[i].x + bullets[i].width > player.x &&
-                        bullets[i].y < player.y + player.height &&
-                        bullets[i].y + bullets[i].height > player.y
-                    ) {
-                        // Player hit
-                        bullets.splice(i, 1);
-                        lives--;
-                        document.getElementById('invaders-lives').textContent = lives;
-                        
-                        if (lives <= 0) {
-                            endGame();
-                            return;
-                        }
-                        break;
-                    }
-                }
-                
-                // Check if all invaders are destroyed
-                if (invaders.length === 0) {
-                    // Level complete - reset with faster enemies
-                    createInvaders();
-                    invaderSpeed += 0.5;
-                }
-                
-                // Draw score and lives
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, 10, 30);
-                ctx.fillText(`Жизни: ${lives}`, canvas.width - 120, 30);
-                
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            function shoot() {
-                const now = performance.now();
-                if (now - lastBulletTime < bulletDelay) return;
-                
-                bullets.push({
-                    x: player.x + player.width/2 - 2.5,
-                    y: player.y,
-                    width: 5,
-                    height: 15,
-                    speed: -10,
-                    color: '#00ff00'
-                });
-                
-                lastBulletTime = now;
-            }
-            
-            function endGame() {
-                gameOver = true;
-                cancelAnimationFrame(window.currentAnimationId);
-                
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.75)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                ctx.fillStyle = '#ff0000';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                ctx.fillText('Игра окончена!', canvas.width/2, canvas.height/2 - 30);
-                ctx.fillStyle = 'white';
-                ctx.font = '20px Orbitron';
-                ctx.fillText(`Счет: ${score}`, canvas.width/2, canvas.height/2 + 10);
-                ctx.fillText(`Нажмите любую клавишу`, canvas.width/2, canvas.height/2 + 40);
-                ctx.fillText(`чтобы начать заново`, canvas.width/2, canvas.height/2 + 70);
-                
-                document.addEventListener('keydown', resetGame);
-                document.getElementById('invaders-shoot').addEventListener('click', resetGame);
-            }
-            
-            function resetGame() {
-                document.removeEventListener('keydown', resetGame);
-                document.getElementById('invaders-shoot').removeEventListener('click', resetGame);
-                
-                invaders.length = 0;
-                bullets.length = 0;
-                player.x = canvas.width / 2 - 25;
-                player.y = canvas.height - 60;
-                score = 0;
-                lives = 3;
-                invaderDirection = 1;
-                invaderSpeed = 1;
-                gameOver = false;
-                document.getElementById('invaders-score').textContent = score;
-                document.getElementById('invaders-lives').textContent = lives;
-                createInvaders();
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (gameOver) return;
-                
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        isMovingLeft = true;
-                        break;
-                    case 'ArrowRight':
-                        isMovingRight = true;
-                        break;
-                    case ' ':
-                        shoot();
-                        break;
-                }
-            });
-            
-            document.addEventListener('keyup', (e) => {
-                switch(e.key) {
-                    case 'ArrowLeft':
-                        isMovingLeft = false;
-                        break;
-                    case 'ArrowRight':
-                        isMovingRight = false;
-                        break;
-                }
-            });
-            
-            // Mobile controls
-            document.getElementById('invaders-left').addEventListener('touchstart', () => {
-                isMovingLeft = true;
-            });
-            
-            document.getElementById('invaders-left').addEventListener('touchend', () => {
-                isMovingLeft = false;
-            });
-            
-            document.getElementById('invaders-right').addEventListener('touchstart', () => {
-                isMovingRight = true;
-            });
-            
-            document.getElementById('invaders-right').addEventListener('touchend', () => {
-                isMovingRight = false;
-            });
-            
-            document.getElementById('invaders-shoot').addEventListener('click', () => {
-                if (!gameOver) shoot();
-            });
-            
-            // Start game
-            window.currentAnimationId = requestAnimationFrame(gameLoop);
-        }
-
-        // Game 6: Pong
-        function initPongGame() {
-            const canvas = document.getElementById('game6-canvas');
-            const ctx = canvas.getContext('2d');
-            
-            // Adjust canvas size
-            if (window.innerWidth < 768) {
-                const width = Math.min(window.innerWidth - 40, 600);
-                const height = width * (2/3);
-                canvas.width = width;
-                canvas.height = height;
-            }
-            
-            // Game variables
-            const paddleHeight = 100;
-            const paddleWidth = 10;
-            
-            const playerPaddle = {
-                x: 20,
-                y: canvas.height / 2 - paddleHeight / 2,
-                width: paddleWidth,
-                height: paddleHeight,
-                speed: 8,
-                score: 0
-            };
-            
-            const computerPaddle = {
-                x: canvas.width - paddleWidth - 20,
-                y: canvas.height / 2 - paddleHeight / 2,
-                width: paddleWidth,
-                height: paddleHeight,
-                speed: 5,
-                score: 0
-            };
-            
-            const ball = {
-                x: canvas.width / 2,
-                y: canvas.height / 2,
-                radius: 8,
-                speed: 5,
-                dx: 5,
-                dy: 5
-            };
-            
-            let gamePaused = false;
-            let isPlayerMovingUp = false;
-            let isPlayerMovingDown = false;
-            
-            // Game loop
-            function gameLoop() {
-                if (gamePaused) {
-                    window.currentAnimationId = requestAnimationFrame(gameLoop);
-                    return;
-                }
-                
-                // Clear canvas
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw paddles
-                ctx.fillStyle = '#00ffff';
-                ctx.fillRect(playerPaddle.x, playerPaddle.y, playerPaddle.width, playerPaddle.height);
-                
-                ctx.fillStyle = '#ff00ff';
-                ctx.fillRect(computerPaddle.x, computerPaddle.y, computerPaddle.width, computerPaddle.height);
-                
-                // Draw ball
-                ctx.fillStyle = '#ffffff';
-                ctx.beginPath();
-                ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
-                ctx.fill();
-                
-                // Draw center line
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
-                ctx.setLineDash([10, 10]);
-                ctx.beginPath();
-                ctx.moveTo(canvas.width / 2, 0);
-                ctx.lineTo(canvas.width / 2, canvas.height);
-                ctx.stroke();
-                ctx.setLineDash([]);
-                
-                // Move player paddle
-                if (isPlayerMovingUp && playerPaddle.y > 0) {
-                    playerPaddle.y -= playerPaddle.speed;
-                }
-                if (isPlayerMovingDown && playerPaddle.y + playerPaddle.height < canvas.height) {
-                    playerPaddle.y += playerPaddle.speed;
-                }
-                
-                // Simple AI for computer paddle
-                if (computerPaddle.y + computerPaddle.height / 2 < ball.y - 10) {
-                    computerPaddle.y += computerPaddle.speed;
-                } else if (computerPaddle.y + computerPaddle.height / 2 > ball.y + 10) {
-                    computerPaddle.y -= computerPaddle.speed;
-                }
-                
-                // Ensure computer paddle stays in bounds
-                if (computerPaddle.y < 0) computerPaddle.y = 0;
-                if (computerPaddle.y + computerPaddle.height > canvas.height) {
-                    computerPaddle.y = canvas.height - computerPaddle.height;
-                }
-                
-                // Move ball
-                ball.x += ball.dx;
-                ball.y += ball.dy;
-                
-                // Wall collision (top/bottom)
-                if (ball.y + ball.radius > canvas.height || ball.y - ball.radius < 0) {
-                    ball.dy *= -1;
-                }
-                
-                // Paddle collision
-                // Player paddle
-                if (
-                    ball.x - ball.radius < playerPaddle.x + playerPaddle.width &&
-                    ball.x - ball.radius > playerPaddle.x &&
-                    ball.y > playerPaddle.y &&
-                    ball.y < playerPaddle.y + playerPaddle.height
-                ) {
-                    // Calculate angle based on where ball hits paddle
-                    const hitPosition = (ball.y - (playerPaddle.y + playerPaddle.height / 2)) / (playerPaddle.height / 2);
-                    const angle = hitPosition * Math.PI / 4; // max 45 degrees
-                    
-                    ball.dx = Math.cos(angle) * ball.speed;
-                    ball.dy = Math.sin(angle) * ball.speed;
-                    
-                    // Increase speed slightly
-                    ball.speed *= 1.05;
-                }
-                
-                // Computer paddle
-                if (
-                    ball.x + ball.radius > computerPaddle.x &&
-                    ball.x + ball.radius < computerPaddle.x + computerPaddle.width &&
-                    ball.y > computerPaddle.y &&
-                    ball.y < computerPaddle.y + computerPaddle.height
-                ) {
-                    // Calculate angle based on where ball hits paddle
-                    const hitPosition = (ball.y - (computerPaddle.y + computerPaddle.height / 2)) / (computerPaddle.height / 2);
-                    const angle = hitPosition * Math.PI / 4; // max 45 degrees
-                    
-                    ball.dx = -Math.cos(angle) * ball.speed;
-                    ball.dy = Math.sin(angle) * ball.speed;
-                    
-                    // Increase speed slightly
-                    ball.speed *= 1.05;
-                }
-                
-                // Score points
-                if (ball.x + ball.radius < 0) {
-                    // Computer scores
-                    computerPaddle.score++;
-                    document.getElementById('pong-computer-score').textContent = computerPaddle.score;
-                    resetBall();
-                } else if (ball.x - ball.radius > canvas.width) {
-                    // Player scores
-                    playerPaddle.score++;
-                    document.getElementById('pong-player-score').textContent = playerPaddle.score;
-                    resetBall();
-                }
-                
-                // Draw scores
-                ctx.fillStyle = 'white';
-                ctx.font = '30px Orbitron';
-                ctx.textAlign = 'center';
-                ctx.fillText(`${playerPaddle.score}`, canvas.width / 4, 40);
-                ctx.fillText(`${computerPaddle.score}`, canvas.width * 3/4, 40);
-                
-                window.currentAnimationId = requestAnimationFrame(gameLoop);
-            }
-            
-            function resetBall() {
-                ball.x = canvas.width / 2;
-                ball.y = canvas.height / 2;
-                ball.speed = 5;
-                ball.dx = (Math.random() > 0.5 ? 1 : -1) * 5;
-                ball.dy = (Math.random() * 6 - 3);
-                
-                // Pause for a second
-                gamePaused = true;
+        function runNetworkTool(tool) {
+            if (tool === 'scan') {
+                openApp('terminal');
                 setTimeout(() => {
-                    gamePaused = false;
+                    updateTerminalDisplay('nmap -sS 192.168.1.1/24');
+                }, 500);
+            }
+        }
+        
+        function buyItem(item) {
+            // Calculate new bitcoin balance (mock)
+            let balance = parseFloat(document.getElementById('bitcoinBalance').textContent);
+            let price = 0.018;
+            
+            if (item === 'exploit') price = 0.025;
+            
+            if (balance >= price) {
+                balance -= price;
+                document.getElementById('bitcoinBalance').textContent = balance.toFixed(4);
+                
+                // Show purchase confirmation
+                openApp('terminal');
+                setTimeout(() => {
+                    updateTerminalDisplay(`purchase ${item}`);
+                }, 500);
+            } else {
+                alert('Insufficient funds! Complete more missions to earn bitcoins.');
+            }
+        }
+        
+        function factoryReset() {
+            if (confirm('WARNING: This will erase ALL data and settings. Continue?')) {
+                alert('Initiating factory reset...');
+                setTimeout(() => {
+                    document.location.reload();
+                }, 2000);
+            }
+        }
+        
+        function selfDestruct() {
+            if (confirm('FINAL WARNING: This will DESTROY all data irrecoverably! Continue?')) {
+                document.body.innerHTML = `
+                <div class="flex items-center justify-center h-screen bg-black">
+                    <div class="text-center">
+                        <div class="text-red-500 text-4xl mb-4 blink">SELF DESTRUCT INITIATED</div>
+                        <div id="countdown" class="text-white text-5xl">5</div>
+                        <div class="text-gray-500 mt-4">Destroying all evidence...</div>
+                    </div>
+                </div>
+                `;
+                
+                let count = 5;
+                const countdown = setInterval(() => {
+                    count--;
+                    document.getElementById('countdown').textContent = count;
+                    
+                    if (count <= 0) {
+                        clearInterval(countdown);
+                        document.body.innerHTML = `
+                        <div class="flex items-center justify-center h-screen bg-black">
+                            <div class="text-center">
+                                <div class="text-red-500 text-4xl mb-4">DESTRUCTION COMPLETE</div>
+                                <div class="text-gray-500">All connections terminated</div>
+                            </div>
+                        </div>
+                        `;
+                    }
                 }, 1000);
             }
-            
-            // Keyboard controls
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'ArrowUp') isPlayerMovingUp = true;
-                if (e.key === 'ArrowDown') isPlayerMovingDown = true;
-            });
-            
-            document.addEventListener('keyup', (e) => {
-                if (e.key === 'ArrowUp') isPlayerMovingUp = false;
-                if (e.key === 'ArrowDown') isPlayerMovingDown = false;
-            });
-            
-            // Mobile controls
-            document.getElementById('pong-up').addEventListener('touchstart', () => {
-                isPlayerMovingUp = true;
-            });
-            
-            document.getElementById('pong-up').addEventListener('touchend', () => {
-                isPlayerMovingUp = false;
-            });
-            
-            document.getElementById('pong-down').addEventListener('touchstart', () => {
-                isPlayerMovingDown = true;
-            });
-            
-            document.getElementById('pong-down').addEventListener('touchend', () => {
-                isPlayerMovingDown = false;
-            });
-            
-            // Start game
-            resetBall();
-            window.currentAnimationId = requestAnimationFrame(gameLoop);
         }
         
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            const currentGame = document.querySelector('.game-container[style*="display: block"]');
-            if (!currentGame) return;
+        // Terminal functions
+        function executeCommand() {
+            const input = document.getElementById('commandInput');
+            const command = input.value.trim();
             
-            const gameId = currentGame.id.split('-')[0].replace('game', '');
+            if (command) {
+                commandHistory.push(command);
+                historyIndex = commandHistory.length;
+                
+                updateTerminalDisplay(command);
+                processCommand(command);
+                input.value = '';
+                scrollTerminalToBottom();
+            }
+        }
+        
+        function updateTerminalDisplay(command) {
+            const display = document.getElementById('commandDisplay');
+            display.innerHTML = '';
             
-            if (gameId === '2') initSnakeGame();
-            if (gameId === '3') initCombatGame();
-            if (gameId === '4') initFlappyGame();
-            if (gameId === '5') initInvadersGame();
-            if (gameId === '6') initPongGame();
+            // Add new command line
+            const newLine = document.createElement('div');
+            newLine.className = 'flex items-start mb-1';
+            newLine.innerHTML = `
+                <span class="text-yellow-400 mr-1">root@hackerphone:~#</span>
+                <span>${command}</span>
+            `;
+            document.getElementById('terminalContent').appendChild(newLine);
+            
+            // Process command output
+            const output = getCommandOutput(command);
+            if (output) {
+                const outputLine = document.createElement('div');
+                outputLine.className = 'mb-2';
+                outputLine.innerHTML = output;
+                document.getElementById('terminalContent').appendChild(outputLine);
+            }
+            
+            // Add new prompt
+            const prompt = document.createElement('div');
+            prompt.className = 'flex items-start';
+            prompt.innerHTML = `
+                <span class="text-yellow-400 mr-1">root@hackerphone:~#</span>
+                <span id="commandDisplay" class="flex-1"></span>
+            `;
+            document.getElementById('terminalContent').appendChild(prompt);
+            
+            scrollTerminalToBottom();
+        }
+        
+        function getCommandOutput(command) {
+            const cmd = command.toLowerCase().split(' ')[0];
+            const args = command.split(' ').slice(1).join(' ');
+            
+            switch(cmd) {
+                case 'help':
+                    return `
+                    <div class="text-green-400">Available commands:</div>
+                    <div class="ml-4">
+                        <div>help - Show this help message</div>
+                        <div>clear - Clear terminal</div>
+                        <div>scan [target] - Scan target</div>
+                        <div>ping [host] - Check host availability</div>
+                        <div>whois [domain] - Get domain info</div>
+                        <div>traceroute [host] - Trace route to host</div>
+                        <div>nmap [options] - Port scanner</div>
+                        <div>hydra - Password cracker</div>
+                        <div>exit - Close terminal</div>
+                    </div>
+                    `;
+                case 'clear':
+                    document.getElementById('terminalContent').innerHTML = `
+                    <div class="flex items-start">
+                        <span class="text-yellow-400 mr-1">root@hackerphone:~#</span>
+                        <span id="commandDisplay"></span>
+                    </div>
+                    `;
+                    return '';
+                case 'exit':
+                    closeApp();
+                    return '';
+                case 'ping':
+                    return `
+                    PING ${args || 'example.com'} (93.184.216.34) 56(84) bytes of data.
+                    <br>64 bytes from 93.184.216.34: icmp_seq=1 ttl=54 time=12.3 ms
+                    <br>64 bytes from 93.184.216.34: icmp_seq=2 ttl=54 time=11.8 ms
+                    <br>64 bytes from 93.184.216.34: icmp_seq=3 ttl=54 time=12.1 ms
+                    <br><br>--- ${args || 'example.com'} ping statistics ---
+                    <br>3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+                    <br>rtt min/avg/max/mdev = 11.843/12.098/12.327/0.194 ms
+                    `;
+                case 'whois':
+                    if (!args) return '<span class="text-red-400">Error: No domain specified</span>';
+                    return `
+                    Domain Name: ${args.toUpperCase()}
+                    <br>Registrar: NameCheap, Inc.
+                    <br>Creation Date: 2020-01-15
+                    <br>Updated Date: 2023-05-22
+                    <br>Name Server: NS1.EXAMPLE.COM
+                    <br>Name Server: NS2.EXAMPLE.COM
+                    <br>Status: clientTransferProhibited
+                    `;
+                case 'traceroute':
+                    return `
+                    traceroute to ${args || 'example.com'} (93.184.216.34), 30 hops max, 60 byte packets
+                    <br> 1  192.168.1.1 (192.168.1.1)  1.234 ms  1.456 ms  1.678 ms
+                    <br> 2  10.10.10.1 (10.10.10.1)  5.432 ms  5.678 ms  5.901 ms
+                    <br> 3  213.155.156.25 (213.155.156.25)  12.345 ms  12.567 ms  12.789 ms
+                    <br> 4  93.184.216.34 (93.184.216.34)  15.123 ms  15.345 ms  15.567 ms
+                    `;
+                case 'nmap':
+                    if (!args) return '<span class="text-red-400">Error: No target specified</span>';
+                    const randomOpenPorts = Math.floor(Math.random() * 5) + 1;
+                    let ports = '';
+                    for (let i = 0; i < randomOpenPorts; i++) {
+                        const port = Math.floor(Math.random() * 65535) + 1;
+                        ports += `<br>${port}/tcp open  unknown`;
+                    }
+                    return `
+                    Starting Nmap 7.80 ( https://nmap.org )
+                    <br>Nmap scan report for ${args} (192.168.1.${Math.floor(Math.random() * 254) + 1})
+                    <br>Host is up (0.045s latency).
+                    <br>Not shown: 995 filtered ports
+                    ${ports}
+                    <br><br>Nmap done: 1 IP address (1 host up) scanned in 2.45 seconds
+                    `;
+                case 'hydra':
+                    return `
+                    Hydra v9.0 (c) 2022 by van Hauser/THC
+                    <br>Brute-forcing login for http-get-form
+                    <br>[DATA] attacking service http-get-form on port 80
+                    <br>[80][http-get-form] host: target.com login: admin password: admin123
+                    <br>1 valid password found
+                    <br>Hydra (https://github.com/vanhauser-thc/thc-hydra) finished
+                    `;
+                default:
+                    if (cmd === 'mission' && args === 'start') {
+                        return `
+                        <div class="text-green-400">MISSION BRIEFING:</div>
+                        <div>Retrieve confidential data from megacorp internal server.</div>
+                        <div class="mt-2 text-yellow-400">STEPS:</div>
+                        <div class="ml-4">
+                            <div>1. Find server IP address (try: whois megacorp.com)</div>
+                            <div>2. Scan for open ports (try: nmap [ip])</div>
+                            <div>3. Exploit vulnerable service (locked tool)</div>
+                            <div>4. Extract data from /confidential/ folder</div>
+                        </div>
+                        <div class="mt-2">Complete the steps to finish the mission.</div>
+                        `;
+                    } else if (cmd === 'purchase' && args === 'exploit') {
+                        return `
+                        <div class="text-green-400">PURCHASE CONFIRMED</div>
+                        <div>Exploit Framework v5.2</div>
+                        <div class="mt-2">Downloading package... <span class="text-green-400">DONE</span></div>
+                        <div>Verifying signature... <span class="text-green-400">VALID</span></div>
+                        <div>Installing... <span class="text-green-400">SUCCESS</span></div>
+                        <div class="mt-2">New tool available in TOOLKIT</div>
+                        `;
+                    } else if (cmd === 'purchase' && args === 'stealth') {
+                        return `
+                        <div class="text-green-400">PURCHASE CONFIRMED</div>
+                        <div>Stealth Module v3.1</div>
+                        <div class="mt-2">Downloading package... <span class="text-green-400">DONE</span></div>
+                        <div>Verifying signature... <span class="text-green-400">VALID</span></div>
+                        <div>Installing... <span class="text-green-400">SUCCESS</span></div>
+                        <div class="mt-2">New stealth tools available in NETWORK</div>
+                        `;
+                    } else if (cmd === 'scan') {
+                        return `
+                        Starting network scan...
+                        <br>Discovered hosts:
+                        <br>192.168.1.1 - Router - Secure
+                        <br>192.168.1.${Math.floor(Math.random() * 100) + 100} - Windows PC - Vulnerable
+                        <br>192.168.1.${Math.floor(Math.random() * 100) + 100} - Linux Server - Secure
+                        <br><br>Scan complete. 3 hosts found.
+                        `;
+                    } else {
+                        return `<span class="text-red-400">Command not found: ${cmd}. Type 'help' for available commands.</span>`;
+                    }
+            }
+        }
+        
+        function processCommand(command) {
+            // Could be expanded for game logic
+        }
+        
+        function scrollTerminalToBottom() {
+            const terminal = document.getElementById('terminalContent');
+            terminal.scrollTop = terminal.scrollHeight;
+        }
+        
+        // Keyboard shortcuts for terminal
+        document.getElementById('commandInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                executeCommand();
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                if (commandHistory.length > 0 && historyIndex > 0) {
+                    historyIndex--;
+                    this.value = commandHistory[historyIndex];
+                }
+            } else if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                if (historyIndex < commandHistory.length - 1) {
+                    historyIndex++;
+                    this.value = commandHistory[historyIndex];
+                } else {
+                    historyIndex = commandHistory.length;
+                    this.value = '';
+                }
+            }
         });
+        
+        // Battery simulation
+        setInterval(() => {
+            const battery = document.getElementById('battery');
+            const percent = parseInt(battery.textContent);
+            let newPercent = percent - 1;
+            
+            if (newPercent <= 10) {
+                battery.innerHTML = `<i class="fas fa-battery-quarter text-red-500"></i> ${newPercent}%`;
+            } else if (newPercent <= 30) {
+                battery.innerHTML = `<i class="fas fa-battery-half text-yellow-500"></i> ${newPercent}%`;
+            } else {
+                battery.innerHTML = `<i class="fas fa-battery-full"></i> ${newPercent}%`;
+            }
+            
+            if (newPercent <= 0) {
+                battery.innerHTML = `<i class="fas fa-battery-empty text-red-500"></i> 0%`;
+                setTimeout(() => {
+                    alert('Battery critically low! Connecting to charger...');
+                    battery.innerHTML = `<i class="fas fa-bolt text-yellow-500"></i> 5%`;
+                }, 2000);
+            }
+        }, 60000);
+        
+        // First run animation
+        setTimeout(() => {
+            document.getElementById('homeScreen').classList.remove('hidden');
+        }, 1500);
     </script>
 </body>
 </html>
